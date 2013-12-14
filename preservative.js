@@ -7,14 +7,19 @@ var construct = function (Ctor, args) {
   return new F();
 };
 
+var stringify = function (o) {
+  // TODO: throw if any method takes circulars or functions
+  // inherent limitation of preservative
+  return (Object(o) === o) ? JSON.stringify(o) : o + '';
+};
 
 module.exports = function (Klass, apiList) {
   function SubKlass() {
     this.state = [];
     var args = arguments;
-    var o = {};
+    var o = { type: 'new' };
     apiList.new.forEach(function (arg, i) {
-      o[arg] = args[i]; // TODO: always stringify
+      o[arg] = stringify(args[i]);
     });
     this.state.push(o);
 
@@ -22,13 +27,17 @@ module.exports = function (Klass, apiList) {
 
     // TODO: try to create getters for every public property on inst
     this.inst = inst;
-    this.results = inst.results;
-    ['numPlayers', 'results', 'matches', 'isDone'].forEach(function (prop) {
+
+    // forward methods
+    ['results', 'isDone', 'upcoming'].forEach(function (method) {
+      this[method] = inst[method].bind(inst);
+    }.bind(this));
+
+    // forward references
+    ['numPlayers', 'matches' ].forEach(function (prop) {
       Object.defineProperty(this, prop, {
         get: function () {
-          return (inst[prop] instanceof Function) ?
-            inst[prop].apply(inst, arguments) :
-            inst[prop];
+          return inst[prop];
         }
       });
     }.bind(this));
@@ -39,9 +48,9 @@ module.exports = function (Klass, apiList) {
     SubKlass.prototype[name] = function () {
       this.inst[name].apply(this.inst, arguments);
       var args = arguments;
-      var o = {};
+      var o = { type: name };
       namedArgs.forEach(function (arg, i) {
-        o[arg] = Object(args[i]) === args[i] ? JSON.stringify(args[i]) : args[i] + '';
+        o[arg] = stringify(args[i]);
       });
       this.state.push(o);
     };

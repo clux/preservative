@@ -21,6 +21,10 @@ duel.matches.forEach(function (m) {
   duel.score(m.id, m.p[0] < m.p[1] ? [2,0] : [0,2]);
 });
 
-//console.log(duel.matches, duel.results());
-console.log(duel.results);
+console.log(duel.matches, duel.results());
 
+var state = duel.getState().map(function (o) {
+  return JSON.stringify(o);
+}).join('\n');
+
+console.log(state);
