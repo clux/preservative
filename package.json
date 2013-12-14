@@ -1,0 +1,23 @@
+{
+  "name": "preservative",
+  "description": "A library to attach to state machines so that scenarios can be replayed",
+  "author": "Eirik Albrigtsen <analsandblaster@gmail.com>",
+  "version": "0.0.0",
+  "repository": {
+    "type": "git",
+    "url": "clux/preservative"
+  },
+  "keywords": [],
+  "main": "preservative.js",
+  "scripts": {
+    "test": "$(npm bin)/tap test/*.js"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "tap": "~0.4.4"
+  },
+  "bugs": {
+    "url": "http://github.com/clux/preservative/issues"
+  },
+  "license": "MIT"
+}
