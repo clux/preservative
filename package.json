@@ -2,7 +2,7 @@
   "name": "preservative",
   "description": "A library to attach to state machines so that scenarios can be replayed",
   "author": "Eirik Albrigtsen <analsandblaster@gmail.com>",
-  "version": "0.0.0",
+  "version": "0.1.0",
   "repository": {
     "type": "git",
     "url": "clux/preservative"
