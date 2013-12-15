@@ -43,7 +43,10 @@ module.exports = function (Klass, apiList, proxyList) {
     // forward methods
     // needs to be specified which ones as they can exist on several places:
     // inst, Klass.prototype, UnknownSuperClasses.prototype
-    proxyList.forEach(function (method) {
+    proxyList.filter(function (method) {
+      // but never allow overriding the ones we are keeping track of
+      return Object.keys(apiList).indexOf(method) < 0;
+    }).forEach(function (method) {
       this[method] = inst[method].bind(inst);
     }.bind(this));
   }
