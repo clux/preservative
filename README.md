@@ -12,7 +12,7 @@ Attach a state machine of your choice, and pass in the operations that changes t
 var PreservedDuel = require('preservative')(require('duel'), {
   new: ['size', 'opts'],          // need to remember constructor arguments
   score: ['id', 'score', 'past']  // and every score call
-}, ['results', 'upcoming', 'players']); // methods to proxy from instance
+});
 
 var duel = new PreservedDuel(8); // 8 player duel tournament
 duel.score(duel.matches[0].id, [1,0]); // use duel API

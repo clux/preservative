@@ -1,13 +1,13 @@
 {
   "name": "preservative",
-  "description": "A library to attach to state machines so that scenarios can be replayed",
+  "description": "A proxy for state machines to preserve state and history",
   "author": "Eirik Albrigtsen <analsandblaster@gmail.com>",
   "version": "0.1.1",
   "repository": {
     "type": "git",
     "url": "clux/preservative"
   },
-  "keywords": [],
+  "keywords": ["object", "proxy", "state", "replay", "record", "recreate"],
   "main": "preservative.js",
   "scripts": {
     "test": "$(npm bin)/tap test/*.js"
