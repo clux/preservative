@@ -18,7 +18,22 @@ var fetchArguments = function (obj) {
   return args;
 };
 
-module.exports = function (Klass, apiList, proxyList) {
+var getKeysDeep = function (inst) {
+  var keys = Object.keys(inst);
+  for (var obj = inst; obj !== null; obj = Object.getPrototypeOf(obj)) {
+    var currKeys = Object.keys(obj);
+    for (var i = 0; i < currKeys.length; i += 1) {
+      var key = currKeys[i];
+      if (keys.indexOf(key) < 0) {
+        keys.push(key);
+      }
+    }
+  }
+  return keys;
+};
+module.exports = function (Klass, apiList) {
+  var apiKeys = Object.keys(apiList);
+
   // create a wrapper class
   function SubKlass() {
     this.state = [];
@@ -32,26 +47,26 @@ module.exports = function (Klass, apiList, proxyList) {
     var inst = construct(Klass, arguments);
     this.inst = inst;
 
-    // getters for vars on inst
-    Object.keys(inst).forEach(function (key) {
-      Object.defineProperty(this, key, {
-        get: function () {
-          return inst[key];
-        }
-      });
-    }.bind(this));
-    // forward methods
-    // needs to be specified which ones as they can exist on several places:
-    // inst, Klass.prototype, UnknownSuperClasses.prototype
-    proxyList.filter(function (method) {
-      // but never allow overriding the ones we are keeping track of
-      return Object.keys(apiList).indexOf(method) < 0;
-    }).forEach(function (method) {
-      this[method] = inst[method].bind(inst);
+    getKeysDeep(inst).filter(function (key) {
+      // never allow overriding the ones we are keeping track of
+      return apiKeys.indexOf(key) < 0;
+    }).forEach(function (key) {
+      if (typeof inst[key] === 'function') {
+        // forward methods
+        this[key] = inst[key].bind(inst);
+      }
+      else {
+        // proxy variables
+        Object.defineProperty(this, key, {
+          get: function () {
+            return inst[key];
+          }
+        });
+      }
     }.bind(this));
   }
 
-  Object.keys(apiList).forEach(function (name) {
+  apiKeys.forEach(function (name) {
     var namedArgs = apiList[name];
     SubKlass.prototype[name] = function () {
       this.inst[name].apply(this.inst, arguments);

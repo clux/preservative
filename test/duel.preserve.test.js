@@ -5,7 +5,7 @@ test("recreating duel tournament", function (t) {
   var PreservedDuel = preservative(require('duel'), {
     new: ['size', 'opts'],
     score: ['id', 'score', 'past']
-  }, ['results', 'upcoming', 'players', 'isDone']);
+  });
 
   var duel = new PreservedDuel(8);
   duel.matches.forEach(function (m) {
