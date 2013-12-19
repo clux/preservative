@@ -1,3 +1,5 @@
+var slice = Array.prototype.slice;
+
 var construct = function (Ctor, args) {
   var F;
   F = function () {
@@ -5,17 +7,6 @@ var construct = function (Ctor, args) {
   };
   F.prototype = Ctor.prototype;
   return new F();
-};
-
-// converts a preserve object to an argument list to apply with
-var fetchArguments = function (obj) {
-  var args = [];
-  Object.keys(obj).forEach(function (key) {
-    if (key !== 'type') {
-      args.push(obj[key]);
-    }
-  });
-  return args;
 };
 
 var getKeysDeep = function (inst) {
@@ -31,25 +22,27 @@ var getKeysDeep = function (inst) {
   }
   return keys;
 };
-module.exports = function (Klass, apiList) {
-  var apiKeys = Object.keys(apiList);
+
+var validOp = function (op) {
+  return 'string' === typeof op.type && Array.isArray(op.args);
+};
+
+module.exports = function (Klass, apiList, opts) {
+  opts = opts || {};
 
   // create a wrapper class
   function SubKlass() {
-    this.state = [];
-    var args = arguments;
-    var o = { type: 'new' };
-    apiList.new.forEach(function (arg, i) {
-      o[arg] = args[i];
-    });
-    this.state.push(o);
+    this.state = [{
+      type: 'new',
+      args: slice.call(arguments, 0)
+    }];
 
     var inst = construct(Klass, arguments);
     this.inst = inst;
 
     getKeysDeep(inst).filter(function (key) {
       // never allow overriding the ones we are keeping track of
-      return apiKeys.indexOf(key) < 0;
+      return apiList.indexOf(key) < 0;
     }).forEach(function (key) {
       if (typeof inst[key] === 'function') {
         // forward methods
@@ -66,35 +59,41 @@ module.exports = function (Klass, apiList) {
     }.bind(this));
   }
 
-  apiKeys.forEach(function (name) {
-    var namedArgs = apiList[name];
+  apiList.forEach(function (name) {
     SubKlass.prototype[name] = function () {
-      this.inst[name].apply(this.inst, arguments);
-      var args = arguments;
-      var o = { type: name };
-      namedArgs.forEach(function (arg, i) {
-        o[arg] = args[i];
-      });
-      this.state.push(o);
+      var res = this.inst[name].apply(this.inst, arguments);
+      if (!(!res && opts.filterNoops)) {
+        this.state.push({
+          type: name,
+          args: slice.call(arguments, 0)
+        });
+      }
+      return res;
     };
   });
 
   SubKlass.prototype.preserve = function () {
-    return this.state;
+    return this.state.slice();
   };
 
   SubKlass.from = function (preserve) {
-    if (!preserve || !preserve.length || preserve[0].type !== 'new') {
-      throw new Error("Type 'new' must be first in the preserve");
+    if (!Array.isArray(preserve)) {
+      throw new Error("No operations preserved");
     }
+    if (!validOp(preserve[0]) || preserve[0].type !== 'new') {
+      throw new Error("First operation must be a valid 'new'" + preserve[0].type);
+    }
+
     // recreate with same ctor args
-    var args = fetchArguments(preserve[0]);
-    var inst = construct(SubKlass, args);
+    var inst = construct(SubKlass, preserve[0].args);
 
     // re-apply all worthy operations to the state machine in correct order
     preserve.slice(1).forEach(function (op) {
-      var args = fetchArguments(op);
-      inst[op.type].apply(inst, args);
+      if (!validOp(op)) {
+        var s = JSON.stringify(op);
+        throw new Error("Preserved operation " + s + " invalid");
+      }
+      inst[op.type].apply(inst, op.args);
     });
 
     return inst;
