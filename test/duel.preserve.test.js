@@ -25,3 +25,23 @@ test("recreating duel tournament", function (t) {
 
   t.end();
 });
+
+test("noop filter", function (t) {
+  var PDuel1 = preservative(Duel, ['new', 'score']);
+  var d1 = new PDuel1(4, { last: 2 });
+  // failed scores should get saved, and attempted
+  t.ok(!d1.score(d1.matches[d1.matches.length-1].id, [1,0]), 'score failed');
+  t.equal(d1.preserve().length, 2, 'both ops saved');
+
+  var PDuel2 = preservative(Duel, ['new', 'score'], { filterNoops: true });
+  var d2 = new PDuel2(4, { last: 2 });
+  // failed scores should not get saved, but attempted only
+  t.ok(!d2.score(d2.matches[d2.matches.length-1].id, [1,0]), 'score failed');
+  t.equal(d2.preserve().length, 1, 'only new op saved');
+
+  t.deepEqual(PDuel2.from(d2.preserve()).matches,
+    PDuel1.from(d1.preserve()).matches,
+    "matches in recreated equal still"
+  );
+  t.end();
+});

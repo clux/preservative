@@ -1,4 +1,11 @@
-0.2.0 / 2013-11-26
+0.3.0 / 2013-11-20
+===================
+  * `apiList` no longer requires names of arguments - we need them in order anyway - fixes #3
+  * deprecates 0.2.0 due to serious bug #3
+  * proxy now returns correct result for apiList rather than void
+  * `filterNoops` implemented for classes that return bool on saved call
+
+0.2.0 / 2013-11-16
 ===================
   * `proxyList` now inferred from prototype chain of instance - also fixes #2
 
