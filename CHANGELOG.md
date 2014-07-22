@@ -1,3 +1,7 @@
+0.3.1 / 2014-07-22
+===================
+  * Documentation and coverage release
+
 0.3.0 / 2013-11-20
 ===================
   * `apiList` no longer requires names of arguments - we need them in order anyway - fixes #3

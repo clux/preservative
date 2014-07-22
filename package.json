@@ -15,14 +15,19 @@
     "record",
     "recreate"
   ],
-  "main": "preservative.js",
+  "main": "index.js",
   "scripts": {
-    "test": "$(npm bin)/tap test/*.js"
+    "test": "$(npm bin)/nodeunit --reporter=verbose test/*.js",
+    "instrument": "$(npm bin)/jscoverage lib",
+    "coverage": "PRESERVATIVE_COV=1 $(npm bin)/nodeunit --reporter=lcov test/*.js",
+    "coveralls": "npm run coverage | coveralls"
   },
   "dependencies": {},
   "devDependencies": {
-    "tap": "~0.4.6",
-    "duel": "~0.4.4"
+    "coveralls": "^2.11.1",
+    "duel": "^0.5.0",
+    "jscoverage": "^0.5.5",
+    "nodeunit": "^0.9.0"
   },
   "bugs": {
     "url": "http://github.com/clux/preservative/issues"

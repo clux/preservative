@@ -1,8 +1,7 @@
-var test = require('tap').test
-  , Duel = require('duel')
+var Duel = require('duel')
   , preservative = require('../');
 
-test("recreating duel tournament", function (t) {
+exports.duel = function (t) {
   var PDuel = preservative(Duel, ['new', 'score']);
   var duel = new PDuel(8);
   t.equal(duel.preserve().length, 1, '1 op');
@@ -23,10 +22,10 @@ test("recreating duel tournament", function (t) {
   t.equal(duel2.numPlayers, 8, 'have getters for vars on instance');
   t.equal(duel.isDone(), true, 'have methods that redirect to inner instance');
 
-  t.end();
-});
+  t.done();
+};
 
-test("noop filter", function (t) {
+exports.noopFilter = function (t) {
   var PDuel1 = preservative(Duel, ['new', 'score']);
   var d1 = new PDuel1(4, { last: 2 });
   // failed scores should get saved, and attempted
@@ -43,5 +42,5 @@ test("noop filter", function (t) {
     PDuel1.from(d1.preserve()).matches,
     "matches in recreated equal still"
   );
-  t.end();
-});
+  t.done();
+};

@@ -1,7 +1,9 @@
 # Preservative
-[![Build Status](https://secure.travis-ci.org/clux/preservative.png)](http://travis-ci.org/clux/preservative)
-[![Dependency Status](https://david-dm.org/clux/preservative.png)](https://david-dm.org/clux/preservative)
-[![experimental](http://hughsk.github.io/stability-badges/dist/experimental.svg)](http://nodejs.org/api/documentation.html#documentation_stability_index)
+[![npm status](http://img.shields.io/npm/v/preservative.svg)](https://www.npmjs.org/package/preservative)
+[![build status](https://secure.travis-ci.org/clux/preservative.svg)](http://travis-ci.org/clux/preservative)
+[![dependency status](https://david-dm.org/clux/preservative.svg)](https://david-dm.org/clux/preservative)
+[![coverage status](http://img.shields.io/coveralls/clux/preservative.svg)](https://coveralls.io/r/clux/preservative)
+[![experimental](http://img.shields.io/badge/stability-experimental-DD5F0A.svg)](http://nodejs.org/api/documentation.html#documentation_stability_index)
 
 This module allows you to replay scenarios from state machines whose interface is a single class. Advantageous to serializing and saving internal state as a JSON blob because not only do you get full revision history, but also *append-only* history which is nice for replication.
 
