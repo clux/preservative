@@ -2,7 +2,7 @@
   "name": "preservative",
   "description": "A proxy for state machines to preserve state and history",
   "author": "Eirik Albrigtsen <analsandblaster@gmail.com>",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "repository": {
     "type": "git",
     "url": "clux/preservative"
