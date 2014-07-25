@@ -1,5 +1,6 @@
 var Duel = require('duel')
-  , preservative = require('../');
+  , location = process.env.PRESERVATIVE_COV ? '../preservative-cov.js' : '../'
+  , preservative = require(location);
 
 exports.duel = function (t) {
   var PDuel = preservative(Duel, ['new', 'score']);
